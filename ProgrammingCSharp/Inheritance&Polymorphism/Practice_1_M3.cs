@@ -5,7 +5,7 @@
 
     }
 
-    // Inheritancce
+    // Inheritance
     public class Pool
     {
         public int chlorineLevel;
