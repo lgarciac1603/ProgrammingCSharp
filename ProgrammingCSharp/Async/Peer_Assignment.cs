@@ -5,6 +5,7 @@ namespace ProgrammingCSharp.Async
     public class Peer_Assignment
     {
         static string[] books = new string[5];
+        static bool[] checkedOutStatus = new bool[5];
         static int borrowedBooksCount = 0;
         const int borrowingLimit = 3;
 
@@ -33,10 +34,13 @@ namespace ProgrammingCSharp.Async
                         SearchBook();
                         break;
                     case "5":
+                        CheckoutBook();
+                        break;
+                    case "6":
                         running = false;
                         break;
                     default:
-                        Console.WriteLine("Invalid option, please choose between 1 and 5.");
+                        Console.WriteLine("Invalid option, please choose between 1 and 6.");
                         break;
                 }
 
@@ -57,8 +61,9 @@ namespace ProgrammingCSharp.Async
             Console.WriteLine("2. Remove book");
             Console.WriteLine("3. Show books");
             Console.WriteLine("4. Search book");
-            Console.WriteLine("5. Exit");
-            Console.Write("Choose an option (1-5): ");
+            Console.WriteLine("5. Checkout book");
+            Console.WriteLine("6. Exit");
+            Console.Write("Choose an option (1-6): ");
         }
 
         static void AddBook()
@@ -108,6 +113,7 @@ namespace ProgrammingCSharp.Async
                 if (string.IsNullOrEmpty(books[i]))
                 {
                     books[i] = newBook;
+                    checkedOutStatus[i] = false; // Por defecto, el libro no está marcado como checkout.
                     return true;
                 }
             }
@@ -155,6 +161,7 @@ namespace ProgrammingCSharp.Async
                 if (books[i] != null && books[i].Equals(bookToRemove, StringComparison.OrdinalIgnoreCase))
                 {
                     books[i] = null;
+                    checkedOutStatus[i] = false;
                     return true;
                 }
             }
@@ -166,11 +173,12 @@ namespace ProgrammingCSharp.Async
             Console.WriteLine("\nBooks available in the library:");
             bool hasBooks = false;
 
-            foreach (var book in books)
+            for (int i = 0; i < books.Length; i++)
             {
-                if (!string.IsNullOrEmpty(book))
+                if (!string.IsNullOrEmpty(books[i]))
                 {
-                    Console.WriteLine($"- {book}");
+                    string status = checkedOutStatus[i] ? " (Checked Out)" : "";
+                    Console.WriteLine($"- {books[i]}{status}");
                     hasBooks = true;
                 }
             }
@@ -200,6 +208,36 @@ namespace ProgrammingCSharp.Async
             if (!found)
             {
                 Console.WriteLine($"Book '{bookToSearch}' is not available in the library.");
+            }
+        }
+
+        static void CheckoutBook()
+        {
+            Console.Write("Enter the title of the book to checkout: ");
+            string bookToCheckout = Console.ReadLine();
+            bool found = false;
+
+            for (int i = 0; i < books.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(books[i]) && books[i].Equals(bookToCheckout, StringComparison.OrdinalIgnoreCase))
+                {
+                    found = true;
+                    if (checkedOutStatus[i])
+                    {
+                        Console.WriteLine($"Book '{bookToCheckout}' is already checked out.");
+                    }
+                    else
+                    {
+                        checkedOutStatus[i] = true;
+                        Console.WriteLine($"Book '{bookToCheckout}' has been successfully checked out.");
+                    }
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine($"Book '{bookToCheckout}' is not available in the library.");
             }
         }
     }
