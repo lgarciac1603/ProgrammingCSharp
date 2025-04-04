@@ -1,28 +1,31 @@
-﻿namespace ProgrammingCSharp.Async
+﻿using System;
+
+namespace ProgrammingCSharp.Async
 {
     public class Peer_Assignment
     {
+        static string[] books = new string[5];
+
         public static void Main(string[] args)
         {
-            string[] books = new string[5];
             bool running = true;
 
             while (running)
             {
                 Console.Clear();
                 DisplayMenu();
-                string option = Console.ReadLine();
+                string option = Console.ReadLine().ToLower();
 
                 switch (option)
                 {
                     case "1":
-                        AddBook(books);
+                        AddBook();
                         break;
                     case "2":
-                        RemoveBook(books);
+                        RemoveBook();
                         break;
                     case "3":
-                        ShowBooks(books);
+                        ShowBooks();
                         break;
                     case "4":
                         running = false;
@@ -52,22 +55,40 @@
             Console.Write("Choose an option (1-4): ");
         }
 
-        static void AddBook(string[] books)
+        static void AddBook()
         {
+            if (IsLibraryFull())
+            {
+                Console.WriteLine("The library is full. No more books can be added.");
+                return;
+            }
+
             Console.Write("Enter the title of the book to add: ");
             string newBook = Console.ReadLine();
 
-            if (AddBookToArray(books, newBook))
+            if (AddBookToArray(newBook))
             {
                 Console.WriteLine($"Book '{newBook}' added successfully.");
             }
             else
             {
-                Console.WriteLine("The library is full. No more books can be added.");
+                Console.WriteLine("Error adding the book.");
             }
         }
 
-        static bool AddBookToArray(string[] books, string newBook)
+        static bool IsLibraryFull()
+        {
+            foreach (var book in books)
+            {
+                if (string.IsNullOrEmpty(book))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static bool AddBookToArray(string newBook)
         {
             for (int i = 0; i < books.Length; i++)
             {
@@ -80,12 +101,18 @@
             return false;
         }
 
-        static void RemoveBook(string[] books)
+        static void RemoveBook()
         {
+            if (IsLibraryEmpty())
+            {
+                Console.WriteLine("The library is empty. No books to remove.");
+                return;
+            }
+
             Console.Write("Enter the title of the book to remove: ");
             string bookToRemove = Console.ReadLine();
 
-            if (RemoveBookFromArray(books, bookToRemove))
+            if (RemoveBookFromArray(bookToRemove))
             {
                 Console.WriteLine($"Book '{bookToRemove}' removed successfully.");
             }
@@ -95,7 +122,19 @@
             }
         }
 
-        static bool RemoveBookFromArray(string[] books, string bookToRemove)
+        static bool IsLibraryEmpty()
+        {
+            foreach (var book in books)
+            {
+                if (!string.IsNullOrEmpty(book))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static bool RemoveBookFromArray(string bookToRemove)
         {
             for (int i = 0; i < books.Length; i++)
             {
@@ -108,10 +147,11 @@
             return false;
         }
 
-        static void ShowBooks(string[] books)
+        static void ShowBooks()
         {
             Console.WriteLine("\nBooks available in the library:");
             bool hasBooks = false;
+
             foreach (var book in books)
             {
                 if (!string.IsNullOrEmpty(book))
