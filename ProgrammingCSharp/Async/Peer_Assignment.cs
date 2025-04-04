@@ -5,6 +5,8 @@ namespace ProgrammingCSharp.Async
     public class Peer_Assignment
     {
         static string[] books = new string[5];
+        static int borrowedBooksCount = 0;
+        const int borrowingLimit = 3;
 
         public static void Main(string[] args)
         {
@@ -28,10 +30,13 @@ namespace ProgrammingCSharp.Async
                         ShowBooks();
                         break;
                     case "4":
+                        SearchBook();
+                        break;
+                    case "5":
                         running = false;
                         break;
                     default:
-                        Console.WriteLine("Invalid option, please choose between 1 and 4.");
+                        Console.WriteLine("Invalid option, please choose between 1 and 5.");
                         break;
                 }
 
@@ -51,8 +56,9 @@ namespace ProgrammingCSharp.Async
             Console.WriteLine("1. Add book");
             Console.WriteLine("2. Remove book");
             Console.WriteLine("3. Show books");
-            Console.WriteLine("4. Exit");
-            Console.Write("Choose an option (1-4): ");
+            Console.WriteLine("4. Search book");
+            Console.WriteLine("5. Exit");
+            Console.Write("Choose an option (1-5): ");
         }
 
         static void AddBook()
@@ -63,11 +69,18 @@ namespace ProgrammingCSharp.Async
                 return;
             }
 
+            if (borrowedBooksCount >= borrowingLimit)
+            {
+                Console.WriteLine($"You have reached the borrowing limit of {borrowingLimit} books.");
+                return;
+            }
+
             Console.Write("Enter the title of the book to add: ");
             string newBook = Console.ReadLine();
 
             if (AddBookToArray(newBook))
             {
+                borrowedBooksCount++;
                 Console.WriteLine($"Book '{newBook}' added successfully.");
             }
             else
@@ -114,6 +127,7 @@ namespace ProgrammingCSharp.Async
 
             if (RemoveBookFromArray(bookToRemove))
             {
+                borrowedBooksCount--;
                 Console.WriteLine($"Book '{bookToRemove}' removed successfully.");
             }
             else
@@ -164,6 +178,28 @@ namespace ProgrammingCSharp.Async
             if (!hasBooks)
             {
                 Console.WriteLine("There are no books in the library.");
+            }
+        }
+
+        static void SearchBook()
+        {
+            Console.Write("Enter the title of the book to search: ");
+            string bookToSearch = Console.ReadLine();
+            bool found = false;
+
+            foreach (var book in books)
+            {
+                if (!string.IsNullOrEmpty(book) && book.Equals(bookToSearch, StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"Book '{bookToSearch}' is available in the library.");
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine($"Book '{bookToSearch}' is not available in the library.");
             }
         }
     }
